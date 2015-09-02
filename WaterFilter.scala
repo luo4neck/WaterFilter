@@ -5,25 +5,35 @@ object WaterFilter
 {
 	def MovieLinkParser( args: Array[String] )
 	{
-		if ( args.length != 1 )
+		def isAllDigits(x: String) = x forall Character.isDigit
+		val UrlSep = args(0).split("/")
+		
+		if  (
+			 args.length == 1 && UrlSep.length == 5 && 
+			 UrlSep(0) == "http:" && UrlSep(1) == "" && 
+			 UrlSep(2) == "movie.douban.com" && 
+			 UrlSep(3) == "subject" && 
+			 isAllDigits( UrlSep(4) ) 
+			) 
 		{
-			println("Wrong input! Please input like:")
-			println("$ scala WaterFilter http://movie.douban.com/subject/1234567/")
-			// exception..
+			println( "Going to analyze movie subject: " + UrlSep(4) )
 		}
 		else
 		{
-			println( "going to get a subject number" )
+			println("Wrong input! Please input like:")
+			println("$ scala WaterFilter http://movie.douban.com/subject/1234567/")
+			throw new Exception("CustomerException: WrongUrlInput")
 		}
+
+		UrlSep(4)
 	}
 
 
 	def main(args: Array[String])
 	{
-		println("this is a scala test")
+		//println("this is a scala test")
 		
 		MovieLinkParser(args)
-		// parse the url and if there is wrong input; return a useful url.
 
 		// the rating API is not useful..
 		// the rater API is??
