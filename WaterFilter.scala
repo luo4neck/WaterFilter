@@ -1,9 +1,8 @@
 // this is the main program..
 
-
-object WaterFilter
+class Parser
 {
-	def MovieLinkParser( args: Array[String] )
+	def MovieLinkParser( args: Array[String] ): String =
 	{
 		def isAllDigits(x: String) = x forall Character.isDigit
 		val UrlSep = args(0).split("/")
@@ -16,28 +15,39 @@ object WaterFilter
 			 isAllDigits( UrlSep(4) ) 
 			) 
 		{
-			println( "Going to analyze movie subject: " + UrlSep(4) )
+			println( "Movie url successfully analyzed, subject number: " + UrlSep(4) )
 		}
-		else
+		else // throw new exception..
 		{
 			println("Wrong input! Please input like:")
 			println("$ scala WaterFilter http://movie.douban.com/subject/1234567/")
 			throw new Exception("CustomerException: WrongUrlInput")
 		}
-
 		UrlSep(4)
 	}
 
+	def UserUrlToId(url: String): String = 
+		url.split("/")(4)
+}
 
+object WaterFilter
+{
 	def main(args: Array[String])
 	{
-		//println("this is a scala test")
+		val parser = new Parser
+		println( parser.MovieLinkParser(args) )
+		// ## 能不能直接调用方法？
 		
-		MovieLinkParser(args)
+		val userurl = "http://movie.douban.com/people/57217550/"
+		println( parser.UserUrlToId(userurl) )
+
+		//while(true)
+		{
+		
+		}
 
 		// the rating API is not useful..
 		// the rater API is??
 		
-
 	}
 }
