@@ -20,7 +20,8 @@ class ContentAnalyze
 
 		if( respcode == 200 )
 		{
-			val reader = new BufferedReader(new InputStreamReader(conn.getInputStream(),"GBK"))
+			val reader = new BufferedReader(new InputStreamReader(conn.getInputStream(),"UTF-8"))
+			// have to be UTF-8 but not GBK..
 
 			var line = new String
 			do
@@ -29,6 +30,7 @@ class ContentAnalyze
 				println(line)
 			} while(line != "</html>" )
 			// because </html> is the end of a html file..
+			reader.close
 		}
 		conn.disconnect
 	}
