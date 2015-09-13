@@ -1,5 +1,40 @@
 // this is the main program..
 
+import java.io.BufferedReader
+import java.io.InputStreamReader
+import java.util.regex.Pattern
+import java.net.URL
+import java.net.HttpURLConnection
+
+class ContentAnalyze
+{
+	def ContentGet(url: String) = 
+	{
+		val uri = new URL(url)
+		val conn = uri.openConnection().asInstanceOf[HttpURLConnection]
+
+		conn.setConnectTimeout(100000)
+		conn.setReadTimeout(1000000)
+
+		val respcode = conn.getResponseCode()
+
+		if( respcode == 200 )
+		{
+			val reader = new BufferedReader(new InputStreamReader(conn.getInputStream(),"GBK"))
+
+			var line = new String
+			do
+			{
+				line = reader.readLine() 
+				println(line)
+			} while(line != "</html>" )
+			// because </html> is the end of a html file..
+		}
+		conn.disconnect
+	}
+}
+
+
 class UrlAnalyze
 {
 	def MovieLinkParser( args: Array[String] ) =
@@ -35,21 +70,42 @@ class UrlAnalyze
 	def UserIdToHomepage(id: String) = "http://www.douban.com/people/" + id
 }
 
+
 object WaterFilter
 {
 	def main(args: Array[String])
 	{
-		val parser = new UrlAnalyze
-		println( parser.MovieLinkParser(args) )
+		val urlana = new UrlAnalyze
+		println( urlana.MovieLinkParser(args) )
 		// ## 能不能直接调用方法？
 		
 		val userurl = "http://movie.douban.com/people/57217550/"
-		println( parser.UserMoviepageToId(userurl) )
-		println( parser.UserIdToHomepage( parser.UserMoviepageToId( userurl ) ) )
+		println( urlana.UserMoviepageToId(userurl) )
+		println( urlana.UserIdToHomepage( urlana.UserMoviepageToId( userurl ) ) )
 		
-		println( parser.RatePageNo(0) )
-		println( parser.RatePageNo(1) )
+		println( urlana.RatePageNo(0) )
+		println( urlana.RatePageNo(1) )
 		// the rating API is not useful..
 		// the rater API is??
+		
+		val conana = new ContentAnalyze
+		conana.ContentGet( userurl )
 	}
 }
+
+
+/*
+scala> val u = "f"
+u: String = f
+
+scala> val all = u.trim.r.findAllIn("fsfsfs")
+all: scala.util.matching.Regex.MatchIterator = non-empty iterator
+
+scala> all.for
+forall    foreach   
+
+scala> all.foreach(println)
+f
+f
+f
+*/
