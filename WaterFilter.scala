@@ -1,46 +1,19 @@
 // this is the main program..
 
-import java.io.BufferedReader
-import java.io.InputStreamReader
 import java.util.regex.Pattern
-import java.net.URL
-import java.net.HttpURLConnection
+import scala.io.Source
 
 class ContentAnalyze
 {
-	def MainContentGet(url: String): Array[String] = 
+	def ContentGet(url: String): Array[String] = 
 	{
-		val uri = new URL(url)
-		val conn = uri.openConnection().asInstanceOf[HttpURLConnection]
-
-		conn.setConnectTimeout(100000)
-		conn.setReadTimeout(1000000)
-
-		val respcode = conn.getResponseCode()
-		var result = new Array[String](0)
-
-		if( respcode == 200 )
+		val con = Source.fromURL(url).mkString.split("\n")
+	/*	for
 		{
-			val reader = new BufferedReader(new InputStreamReader(conn.getInputStream(),"UTF-8"))
-			// have to be UTF-8 but not GBK..
-		
-			var line = new String
-			do
-			{
-				line = reader.readLine() 
-				if(line != "" ) result = result :+ line
-			} while( line != "<div class=\"side-info\">" )
-			// because </html> is the end of a html file..
-	   		
-			reader.close
-			conn.disconnect
-			return result
-		}
-		else
-		{
-			conn.disconnect
-			throw new Exception("CustomerException: CannotAnalyseUrl")
-		}
+			 line <- con 
+			 if(line != "")
+		} yield line */
+		con
 	}
 }
 
@@ -99,10 +72,11 @@ object WaterFilter
 		// the rater API is??
 		
 		val conana = new ContentAnalyze
-		val content = conana.MainContentGet( userurl )
+		val content = conana.ContentGet( userurl )
 	
-		for( line <- content)
-		println(line)
+		content.foreach(println)
+
+		println(content.length)
 	}
 }
 
