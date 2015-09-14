@@ -8,7 +8,7 @@ import java.net.HttpURLConnection
 
 class ContentAnalyze
 {
-	def ContentGet(url: String) = 
+	def MainContentGet(url: String): Array[String] = 
 	{
 		val uri = new URL(url)
 		val conn = uri.openConnection().asInstanceOf[HttpURLConnection]
@@ -17,22 +17,30 @@ class ContentAnalyze
 		conn.setReadTimeout(1000000)
 
 		val respcode = conn.getResponseCode()
+		var result = new Array[String](0)
 
 		if( respcode == 200 )
 		{
 			val reader = new BufferedReader(new InputStreamReader(conn.getInputStream(),"UTF-8"))
 			// have to be UTF-8 but not GBK..
-
+		
 			var line = new String
 			do
 			{
 				line = reader.readLine() 
-				println(line)
-			} while(line != "</html>" )
+				if(line != "" ) result = result :+ line
+			} while( line != "<div class=\"side-info\">" )
 			// because </html> is the end of a html file..
+	   		
 			reader.close
+			conn.disconnect
+			return result
 		}
-		conn.disconnect
+		else
+		{
+			conn.disconnect
+			throw new Exception("CustomerException: CannotAnalyseUrl")
+		}
 	}
 }
 
@@ -91,7 +99,10 @@ object WaterFilter
 		// the rater API is??
 		
 		val conana = new ContentAnalyze
-		conana.ContentGet( userurl )
+		val content = conana.MainContentGet( userurl )
+	
+		for( line <- content)
+		println(line)
 	}
 }
 
